@@ -39,7 +39,7 @@ module AlgorithmLib
     let rec qsort (A:int list) = 
         match A with 
             | [] -> []
-            | [a] -> [a]
+            | [_] -> A
             | head :: tail -> 
                 let smaller = List.filter ( (>=) head) tail
                 let larger = List.filter ( (<) head) tail
@@ -47,7 +47,7 @@ module AlgorithmLib
     let rec rqsort (A:int list) =
         match A with
         | [] -> []
-        | [a] -> [a]
+        | [_] -> A
         | _ ->
             let rmidnum = random.Next (0, A.Length)
             let temp = A.[0 .. rmidnum - 1] @ A.[rmidnum + 1 .. A.Length - 1] //temp is A - [A.[rmidnum]]
@@ -55,14 +55,14 @@ module AlgorithmLib
             let larger = List.filter ( (<) A.[rmidnum]) temp
             (rqsort smaller) @ [A.[rmidnum]] @ (rqsort larger)
     let rec HalfSearch (A: 'T []) (a: 'T) = 
-        // A.[0] is min value
-        if A.Length = 1 then (A.[0] = a, 0)
-        elif A.Length = 0 then (false, 0)
-        else
-            let mid = A.Length / 2
-            if a = A.[mid] then (true,mid)
-            elif a < A.[mid] then HalfSearch A.[0 .. mid - 1] a
-            else HalfSearch A.[mid + 1 .. A.Length - 1] a
+        match A.Length with
+            | 1 -> (A.[0] = a, 0)
+            | 0 -> (false, 0)
+            | _ -> 
+                let mid = A.Length / 2
+                if a = A.[mid] then (true,mid)
+                elif a < A.[mid] then HalfSearch A.[0 .. mid - 1] a
+                else HalfSearch A.[mid + 1 .. A.Length - 1] a
 
     let ParentNode i =
         (i + 1 ) / 2 - 1
@@ -149,9 +149,8 @@ module AlgorithmLib
             RadixSort A i
         ()
 
-    let Sum (A:int []) (a:int) =
+    let SumOfTwoNumber (A:int []) (a:int) =
         QuickSort A 0 (A.Length - 1)
-        printfn " %A" A
         let mutable i = 0
         let mutable result = (false, 0)
         while i < A.Length && not (fst result) do

@@ -6,7 +6,7 @@ open AlgorithmLib
 let main argv = 
     printfn "1:"
     let arr = [|1;5;9;2;8;3;7;6;4;4|]
-    printfn "%A" (Sum arr 8)
+    printfn "%A" (SumOfTwoNumber arr 8)
 
     printfn "2:"
     let arr2 = [|1;5;9;2;8;3;7;6;4;4|]
