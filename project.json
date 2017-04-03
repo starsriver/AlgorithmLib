@@ -6,7 +6,9 @@
         "compilerName": "fsc",
         "compile": {
             "includeFiles": [
-                "AlgorithmLib.fs",
+                "AlgorithmLib1.fs",
+                "AlgorithmLib2.fs",
+                "Test.fs",
                 "Program.fs"
             ]
         }
