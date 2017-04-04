@@ -1,4 +1,5 @@
-module AlgorithmLib2
+namespace SRAlgorithmLib
+module AlgorithmLib2 = 
     open  System.Collections.Generic 
     let temp = 0
     let memoize (f:'a -> 'b) =
@@ -73,4 +74,55 @@ module AlgorithmLib2
                     beginIndex <- i + 1
             i <- i + 1
         maxSum,beginIndex,endIndex
+    
+    [<Struct>]
+    type Node = 
+            val ID:int
+            val Weight:float
+            new (id:int,weight:float) = {ID = id; Weight = weight}
 
+    let AdjListToAdjMatrix (adjList : Set<Node>[]) =
+        let adjMatrix = Array2D.create adjList.Length adjList.Length infinity
+        for i = 0 to adjList.Length - 1 do
+            adjMatrix.[i,i] <- 0.0
+            for j in adjList.[i] do
+                adjMatrix.[i,j.ID] <- j.Weight
+        
+        adjMatrix
+
+    let Floyd (G:float [,]) = 
+        let n = Array2D.length1 G
+        let m = Array2D.copy G
+        let s = Array2D.create n n -1
+        for i = 0 to n - 1 do
+            for j = 0 to n - 1 do
+                for k = 1 to n - 1 do
+                    let q = m.[i,k] + m.[k,j]
+                    if q < m.[i,j] then
+                         m.[i,j] <- q
+                         s.[i,j] <- k
+        (m,s)
+
+    let rec PrintFloyd (s:int [,]) (i:int) (j:int) = 
+        if i = j then
+            printf "%A " i
+        elif s.[i,j] = -1 then
+            printf "%A %A " i j
+        else
+            PrintFloyd s i s.[i,j]
+            PrintFloyd s s.[i,j] j
+
+    let LCSs (X:string) (Y:string) = 
+        let m = X.Length
+        let n = Y.Length
+        let c = Array2D.create (m + 1) (n + 1) 0
+        let mutable maxLength = 0
+        let mutable endIndex = 0
+        for i = 0 to m - 1 do
+            for j = 0 to n - 1 do
+                if X.[i] = Y.[j] then 
+                    c.[i + 1,j + 1] <- c.[i,j] + 1
+                    if c.[i + 1,j + 1] > maxLength then
+                        maxLength <- c.[i + 1,j + 1]
+                        endIndex <- i
+        X.[endIndex - maxLength + 1 .. endIndex]

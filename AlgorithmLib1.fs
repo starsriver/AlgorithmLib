@@ -1,4 +1,5 @@
-module AlgorithmLib1
+namespace SRAlgorithmLib
+module AlgorithmLib1 = 
     let random = System.Random()
 
     let inline (<->) (x:'T byref) (y:'T byref) = 

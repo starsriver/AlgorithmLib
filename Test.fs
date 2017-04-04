@@ -1,6 +1,6 @@
 module Test
-    open AlgorithmLib1
-    open AlgorithmLib2
+    open SRAlgorithmLib.AlgorithmLib1
+    open SRAlgorithmLib.AlgorithmLib2
     let P1 () =
         printfn "1:"
         let arr = [|1;5;9;2;8;3;7;6;4;4|]
@@ -67,3 +67,35 @@ module Test
         let sum,beginIndex,endIndex = MaxSum arr3
         printfn "MaxSun:%i" sum
         printfn "subsequence:%A" arr3.[beginIndex .. endIndex]
+
+        printfn "\n\n4:"
+        let adjList: Set<Node>[] = Array.create 16 Set.empty<Node>
+        adjList.[0] <- set [Node(1,5.0);Node(2,3.0)]
+        adjList.[1] <- set [Node(0,5.0);Node(3,1.0);Node(4,3.0);Node(5,6.0)]
+        adjList.[2] <- set [Node(0,3.0);Node(4,8.0);Node(5,7.0);Node(6,6.0)]
+        adjList.[3] <- set [Node(1,1.0);Node(7,6.0);Node(8,8.0)]
+        adjList.[4] <- set [Node(1,3.0);Node(2,8.0);Node(7,3.0);Node(8,5.0)]
+        adjList.[5] <- set [Node(1,6.0);Node(2,7.0);Node(8,3.0);Node(9,3.0)]
+        adjList.[6] <- set [Node(2,6.0);Node(8,8.0);Node(9,4.0)]
+        adjList.[7] <- set [Node(3,6.0);Node(4,3.0);Node(10,2.0);Node(11,2.0)]
+        adjList.[8] <- set [Node(3,8.0);Node(4,5.0);Node(5,3.0);Node(6,8.0);Node(11,1.0);Node(12,2.0)]
+        adjList.[9] <- set [Node(5,3.0);Node(6,4.0);Node(11,3.0);Node(12,3.0)]
+        adjList.[10] <- set [Node(7,2.0);Node(13,3.0);Node(14,5.0)]
+        adjList.[11] <- set [Node(7,2.0);Node(8,1.0);Node(9,3.0);Node(13,5.0);Node(14,2.0)]
+        adjList.[12] <- set [Node(8,2.0);Node(9,3.0);Node(13,6.0);Node(14,6.0)]
+        adjList.[13] <- set [Node(10,3.0);Node(11,5.0);Node(12,6.0);Node(15,4.0)]
+        adjList.[14] <- set [Node(10,5.0);Node(11,2.0);Node(12,6.0);Node(15,3.0)]
+        adjList.[15] <- set [Node(13,4.0);Node(14,3.0)]
+        let arr4 = AdjListToAdjMatrix adjList
+        let m,s = Floyd arr4
+        PrintFloyd s 7 13
+
+        printfn "\n\n5:"
+        let X51 = "xzyzzyx"
+        let Y51 = "zxyyzxz"
+        printfn "X:%s\tY:%s" X51 Y51
+        printfn "LCSs:%A" (LCSs X51 Y51)
+        let X52 = "MAEEEVAKLEKHLMLLRQEYVKLQKKLAETEKRCALLAAQANKESSSESFISRLLAIVAD"
+        let Y52 = "MAEEEVAKLEKHLMLLRQEYVKLQKKLAETEKRCTLLAAQANKENSNESFISRLLAIVAG"
+        printfn "X:%s\tY:%s" X52 Y52
+        printfn "LCSs:%A" (LCSs X52 Y52)
