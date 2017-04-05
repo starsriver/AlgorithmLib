@@ -88,7 +88,7 @@ module Test
         adjList.[15] <- set [Node(13,4.0);Node(14,3.0)]
         let arr4 = AdjListToAdjMatrix adjList
         let m,s = Floyd arr4
-        PrintFloyd s 7 13
+        PrintFloyd s 0 15
 
         printfn "\n\n5:"
         let X51 = "xzyzzyx"
