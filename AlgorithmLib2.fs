@@ -1,7 +1,5 @@
 namespace SRAlgorithmLib
 module AlgorithmLib2 = 
-    open  System.Collections.Generic 
-    let temp = 0
     let memoize (f:'a -> 'b) =
         let t = new System.Collections.Generic.Dictionary<'a,'b>()
         fun n ->
