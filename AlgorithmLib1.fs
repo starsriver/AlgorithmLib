@@ -1,4 +1,9 @@
 namespace SRAlgorithmLib
+/// <summary>
+/// 算法导论第一次上机使用的算法模块
+/// Auther：乔新文
+/// StudentID：14130140393
+/// </summary>
 module AlgorithmLib1 = 
     let random = System.Random()
 

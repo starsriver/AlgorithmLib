@@ -1,4 +1,9 @@
 namespace SRAlgorithmLib
+/// <summary>
+/// 算法导论第二次上机使用的算法模块
+/// Auther：乔新文
+/// StudentID：14130140393
+/// </summary>
 module AlgorithmLib2 = 
     let memoize (f:'a -> 'b) =
         let t = new System.Collections.Generic.Dictionary<'a,'b>()

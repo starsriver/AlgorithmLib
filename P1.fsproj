@@ -8,6 +8,7 @@
   <ItemGroup>
     <Compile Include="AlgorithmLib1.fs" />
     <Compile Include="AlgorithmLib2.fs" />
+    <Compile Include="AlgorithmLib3.fs" />
     <Compile Include="Test.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>

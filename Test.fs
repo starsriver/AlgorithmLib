@@ -1,6 +1,12 @@
+/// <summary>
+/// 算法导论上机使用的算法测试部分
+/// Auther：乔新文
+/// StudentID：14130140393
+/// </summary>
 module Test
     open SRAlgorithmLib.AlgorithmLib1
     open SRAlgorithmLib.AlgorithmLib2
+    open SRAlgorithmLib.AlgorithmLib3
     let P1 () =
         printfn "1:"
         let arr = [|1;5;9;2;8;3;7;6;4;4|]
@@ -99,3 +105,23 @@ module Test
         let Y52 = "MAEEEVAKLEKHLMLLRQEYVKLQKKLAETEKRCTLLAAQANKENSNESFISRLLAIVAG"
         printfn "X:%s\tY:%s" X52 Y52
         printfn "LCSs:%A" (LCSs X52 Y52)
+    let P3 () =
+        printfn "\n\n1:"
+        let w1 = [50;30;45;25;5]
+        let v1 = [200;180;225;200;50]
+        printfn "%A" (ks 100 w1 v1)
+
+        printfn "\n\n2:"
+        let w2 = [50;30;45;25;5]
+        let v2 = [200;180;225;200;50]
+        printfn "%A" (ksf 100 w2 v2)
+
+        printfn "\n\n3:"
+        let j3 = ["j1";"j2";"j3";"j4"]
+        let t3 = [15;8;3;10]
+        printfn "%A" (SJF j3 t3)
+
+        printfn "\n\n4:"
+        let s4 = [ 0.5;0.7;0.3;0.9;0.6;0.8;0.1;0.4;0.2;0.5]
+        let c5 = 1.0
+        printfn "%A" (Packing c5 s4)

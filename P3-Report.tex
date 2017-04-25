@@ -1,0 +1,336 @@
+\documentclass[a4paper]{article}
+\usepackage{booktabs}
+\usepackage{geometry}
+\geometry{
+  top=1in,
+  inner=1in,
+  outer=1in,
+  bottom=1in,
+  headheight=3ex,
+  headsep=2ex
+}
+\usepackage{amssymb,amsmath}
+\usepackage{fontspec}
+\usepackage[CJKbookmarks, colorlinks, bookmarksnumbered=true,pdfstartview=FitH,linkcolor=black,citecolor=black]{hyperref}
+\usepackage{xeCJK}
+\usepackage{xltxtra,xunicode}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{array}
+
+\lstset{basicstyle=\footnotesize\ttfamily,        % size of fonts used for the code
+        columns=fullflexible,
+        numbers=left,
+        numberstyle=\tiny,
+        keywordstyle=\color{blue},
+        stringstyle=\color[rgb]{0,0.6,0},
+        commentstyle=\color[cmyk]{1,0,1,0},
+        frame=shadowbox,
+        escapeinside=``,
+        breaklines=true,
+        extendedchars=false,
+        xleftmargin=2em,xrightmargin=2em, aboveskip=1em,
+        tabsize=4, %tab size
+        showspaces=false %no space
+       }
+
+\newcommand{\tightlist}{
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+% font
+\setCJKmainfont[AutoFakeBold]{文泉驿微米黑}
+\setmainfont[AutoFakeBold]{Segoe UI}
+\setromanfont[AutoFakeBold]{Segoe UI}
+\setmonofont[Mapping={}]{Monaco}
+\linespread{1.2}\selectfont
+\XeTeXlinebreaklocale "zh" 
+
+\begin{document}
+\title{\Huge 算法导论课程\\ 第三次上机实验报告}
+\author { \vspace{12cm} \\ \LARGE 班级：  1413014  \\ \LARGE 姓名：  乔新文   \\ \LARGE 学号：14130140393} 
+\date{ \vspace{4cm} 2017.4.26}
+
+\maketitle
+\clearpage
+
+\tableofcontents
+
+\clearpage
+
+\section{综述}
+
+本文档将阐述《算法导论》第二次上机实验代码的详细设计及实现。\\
+
+本次上机实验所用代码均为F\#代码，主要算法和辅助定义均包含在SRAlgorithmLib命名空间下AlgorithmLib3.fs所定义的AlgorithmLib3模块中。\\
+
+算法测试驱动部分在Test.fs中Test模块下的P3函数中，整个程序的入口在Program.fs中。\\
+
+本次实验所有代码均运行在.Net Core上，P1.fsproj为项目配置文件，可在安装有.Net Core的环境中在项目文件夹下使用dotnet run命令运行。\\
+
+\section{题目一}
+
+\subsection{题目}
+
+0-1 knapsack problem.
+
+\subsection{实现思路}
+
+由于贪心算法对0-1背包问题无效，故采用自顶向下的递归的动态规划方法求解。\\
+当背包剩余容量小于等于0时，显然递归函数返回0。\\
+当剩余一个物品时，如果物品重量大于背包剩余容量，那么函数返回0，否则返回该物品价值。\\
+当剩余多个物品时，如果第一个物品重量大于背包剩余容量，排除该物品。否则考虑放入该物品和不放入该物品两种情况，取价值较大的情况。\\
+那么递归方程如下：
+\[ks(c,w,v)=
+    \left\{
+        \begin{array}{ll}
+            0 & ,(c \le 0 )\ or \ (|w|=1 \ and \ w.Head > c) \\
+            v.Head & ,|w|=1 \ and \ w.Head \le c \\
+            ks(c,w.Tail,v.Tail) & , w.Head \le c \\
+            max(ks(c,w.Tail,v.Tail),ks(c-w.Head,w.Tail,v.Tail)+v.Head) & , else
+        \end{array}
+    \right.
+\]
+
+\subsection{实现代码}
+
+自顶向下的递归方法如下
+
+\begin{lstlisting}[language=ML]
+    let rec ks c w (v:int list)=
+        if c <= 0 then 0
+        elif List.length w = 1 then
+            if w.Head > c then 0
+            else v.Head
+        else
+            let w' = w.Tail
+            let v' = v.Tail
+            if w.Head > c then 
+                ks c w' v'
+            else
+                max (ks c w' v') ((ks (c - w.Head) w' v') + v.Head)
+\end{lstlisting}
+
+\subsection{算法测试}
+
+\begin{itemize}
+\item
+    测试样例：
+    \begin{itemize}
+    \item
+        w = [50;30;45;25;5] \\
+        v = [200;180;225;200;50]
+    \end{itemize}
+\item
+    样例输出
+    \begin{itemize}
+    \item
+        605
+    \end{itemize}
+\end{itemize}
+
+
+\section{题目二}
+
+\subsection{题目}
+
+Fractional knapsack problem.
+
+\subsection{实现思路}
+
+使用贪心策略，即尽可能的装入更多单位重量价值更高的东西，直到装满或没有东西剩余为止。
+
+\subsection{实现代码}
+
+递归的应用贪心策略，要求传入的vWith1W是从大到小有序的，w与vWith1W严格对应。
+
+\begin{lstlisting}[language=ML]
+    let rec ksfWithSorted c w (vWith1W : float list) =
+        if c <= 0.0 || List.length w <= 0 then 0.0
+        else
+            if c >= w.Head then
+                w.Head * vWith1W.Head + (ksfWithSorted (c - w.Head) w.Tail vWith1W.Tail)
+            else
+                c * vWith1W.Head
+\end{lstlisting}
+
+计算每件物品的单位重量价值，并与其重量序列严格对应进行排序，即对传入的重量列表，价值列表进行预处理后再调用ksfWithSorted。\\
+
+转换c和w为float类型，便于后期计算。
+
+\begin{lstlisting}[language=ML]
+        let c' = float c
+        let wf = List.map (fun item -> (item |> float)) w
+\end{lstlisting}
+
+计算每个物品单位重量的价值。
+\begin{lstlisting}[language=ML]
+        let vWith1W = [for i in 0 .. w.Length - 1 -> (float v.[i])/wf.[i]]
+\end{lstlisting}
+
+按照每个物品单位重量的价值进行降序排序，并保持与w'的对应关系。
+\begin{lstlisting}[language=ML]
+        let vAndvWith1W = List.zip wf vWith1W
+        let vAndvWith1WSorted = List.rev (List.sortBy (fun item -> item |> snd) vAndvWith1W)
+        let (w',vWith1W') = List.unzip vAndvWith1WSorted
+\end{lstlisting}
+
+将处理完成（排序好）的数据交给ksfWithSorted进行计算。
+\begin{lstlisting}[language=ML]
+        ksfWithSorted c' w' vWith1W'
+\end{lstlisting}
+
+完整的ksf代码如下：
+\begin{lstlisting}[language=ML]
+    let ksf c (w: int list) (v: int list) =
+        let c' = float c
+        let wf = List.map (fun item -> (item |> float)) w
+        let vWith1W = [for i in 0 .. w.Length - 1 -> (float v.[i])/wf.[i]]
+        let vAndvWith1W = List.zip wf vWith1W
+        let vAndvWith1WSorted = List.rev (List.sortBy (fun item -> item |> snd) vAndvWith1W)
+
+        let (w',vWith1W') = List.unzip vAndvWith1WSorted
+        ksfWithSorted c' w' vWith1W'
+\end{lstlisting}
+
+\subsection{算法测试}
+
+\begin{itemize}
+\item
+    测试样例：
+    \begin{itemize}
+    \item
+        w = [50;30;45;25;5] \\
+        v = [200;180;225;200;50]
+    \end{itemize}
+\item
+    样例输出
+    \begin{itemize}
+    \item
+        630.0
+    \end{itemize}
+\end{itemize}
+
+\section{题目三}
+
+\subsection{题目}
+
+A simple scheduling problem.
+
+\subsection{实现思路}
+
+使用具有贪心性质的最短作业优先调度方案。\\
+对于有任意数目的作业的情况，\(j_1\)在\(t_1\)时间结束，\(j_2\)在\(t_1+t_2\)时间结束，以此类推，平均周转时间为 \[(n*t_1+(n-1)*t_2+(n-2)*t3+...+2*t_{n-1}+t_n) \div n\]
+可见\(t_1\)对平均周转时间的影响最大，\(t_2\)次之，\(t_n\)最小，故应使\(j_1\)为最短作业，\(j_n\)为最长作业。
+\subsection{实现代码}
+
+按照短作业优先策略计算平均周转时间
+
+\begin{lstlisting}[language=ML]
+    let SJF j t =
+        let jobsAndTime = List.zip j t
+        let jobsSortedByTime = List.sortBy (fun item -> item |> snd) jobsAndTime
+        let (j',t') = List.unzip jobsSortedByTime
+        let sumTime = List.mapi (fun i item -> float (item * (t'.Length - i))) t'
+        (j',List.average sumTime)
+\end{lstlisting}
+
+其中：\\
+
+\begin{lstlisting}[language=ML]
+        let jobsAndTime = List.zip j t
+        let jobsSortedByTime = List.sortBy (fun item -> item |> snd) jobsAndTime
+        let (j',t') = List.unzip jobsSortedByTime
+\end{lstlisting}
+用于对作业持续时间进行升序排列，并保持与任务名称列表间的对应关系。
+
+\begin{lstlisting}[language=ML]
+        let sumTime = List.mapi (fun i item -> float (item * (t'.Length - i))) t'
+        (j',List.average sumTime)
+\end{lstlisting}
+
+用于计算平均周转时间并返回计算结果和作业调度序列。
+
+\subsection{算法测试}
+
+\begin{itemize}
+\item
+    测试样例：
+    \begin{itemize}
+    \item
+        作业序列 \ [j1;j2;j3;j4] \\
+        作业持续时间 \ [15;8;3;10]
+    \end{itemize}
+\item
+    样例输出
+    \begin{itemize}
+    \item
+        平均周转时间最短的作业安排 \ [j3; j2; j4; j1] \\
+        最短的平均周转时间 \ 17.75
+    \end{itemize}
+\end{itemize}
+
+\section{题目四}
+
+\subsection{题目}
+
+Bin Packing
+
+\subsection{实现思路}
+
+使用贪心策略，永远让最小的对象优先装入，并尽可能将箱子装满。
+
+\subsection{实现代码}
+
+判断当前是否还有箱子可以装下次物品，若有，返回该箱子的索引。若没有，返回Null。\\
+由于浮点数计算存在精度问题，故限定可接受的误差在0.0000001内。
+
+\begin{lstlisting}[language=ML]
+            let index = Array.tryFindIndex (fun box -> (box - item) > -0.0000001) boxs
+\end{lstlisting}
+
+若箱子可以装下，则装入该箱子并更新箱子剩余容量。\\
+若装不下，则新放入一个箱子并装入。
+
+\begin{lstlisting}[language=ML]
+            if index.IsSome then
+                boxs.[index.Value] <- boxs.[index.Value] - item
+            else
+                boxs <- Array.append boxs [|1.0|]
+                boxs.[boxs.Length - 1] <- boxs.[boxs.Length - 1] - item
+\end{lstlisting}
+
+完整的Packing代码如下：
+
+\begin{lstlisting}[language=ML]
+    let Packing c s =
+        let s' = List.sort s
+        let mutable boxs = Array.create 0 1.0
+        List.iter (fun item -> 
+            let index = Array.tryFindIndex (fun box -> (box - item) > -0.0000001) boxs
+            if index.IsSome then
+                boxs.[index.Value] <- boxs.[index.Value] - item
+            else
+                boxs <- Array.append boxs [|1.0|]
+                boxs.[boxs.Length - 1] <- boxs.[boxs.Length - 1] - item
+            ) s'
+        boxs.Length
+\end{lstlisting}
+
+\subsection{算法测试}
+
+\begin{itemize}
+\item
+    测试样例：
+    \begin{itemize}
+    \item
+        物品尺寸序列 \ [ 0.5;0.7;0.3;0.9;0.6;0.8;0.1;0.4;0.2;0.5] 
+    \end{itemize}
+\item
+    样例输出
+    \begin{itemize}
+    \item
+        需要的箱子数 \ 6
+    \end{itemize}
+\end{itemize}
+
+\end{document}
