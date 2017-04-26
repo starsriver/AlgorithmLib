@@ -277,15 +277,15 @@ Bin Packing
 
 \subsection{实现思路}
 
-使用贪心策略，永远让最小的对象优先装入，并尽可能将箱子装满。
+使用贪心策略，从最大的物品开始装起，并尽可能将箱子装满。
 
 \subsection{实现代码}
 
 判断当前是否还有箱子可以装下次物品，若有，返回该箱子的索引。若没有，返回Null。\\
-由于浮点数计算存在精度问题，故限定可接受的误差在0.0000001内。
+由于浮点数计算存在精度问题，故限定可接受的误差在0.000001内。
 
 \begin{lstlisting}[language=ML]
-            let index = Array.tryFindIndex (fun box -> (box - item) > -0.0000001) boxs
+            let index = Array.tryFindIndex (fun box -> (box - item) > -0.000001) boxs
 \end{lstlisting}
 
 若箱子可以装下，则装入该箱子并更新箱子剩余容量。\\
@@ -295,23 +295,28 @@ Bin Packing
             if index.IsSome then
                 boxs.[index.Value] <- boxs.[index.Value] - item
             else
-                boxs <- Array.append boxs [|1.0|]
-                boxs.[boxs.Length - 1] <- boxs.[boxs.Length - 1] - item
+                boxs <- Array.append boxs [|1.0 - item|]
+\end{lstlisting}
+
+对箱子按照剩余容量降序排序，因为物品是按降序装入的，可以让剩余容量大的箱子尽可能装满。
+
+\begin{lstlisting}[language=ML]
+            boxs <- Array.rev (Array.sort boxs)
 \end{lstlisting}
 
 完整的Packing代码如下：
 
 \begin{lstlisting}[language=ML]
     let Packing c s =
-        let s' = List.sort s
+        let s' = List.rev (List.sort s)
         let mutable boxs = Array.create 0 1.0
         List.iter (fun item -> 
-            let index = Array.tryFindIndex (fun box -> (box - item) > -0.0000001) boxs
+            let index = Array.tryFindIndex (fun box -> (box - item) >= -0.000001 ) boxs
             if index.IsSome then
                 boxs.[index.Value] <- boxs.[index.Value] - item
             else
-                boxs <- Array.append boxs [|1.0|]
-                boxs.[boxs.Length - 1] <- boxs.[boxs.Length - 1] - item
+                boxs <- Array.append boxs [|1.0 - item|]
+            boxs <- Array.rev (Array.sort boxs)
             ) s'
         boxs.Length
 \end{lstlisting}
@@ -329,7 +334,7 @@ Bin Packing
     样例输出
     \begin{itemize}
     \item
-        需要的箱子数 \ 6
+        需要的箱子数 \ 5
     \end{itemize}
 \end{itemize}
 

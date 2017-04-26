@@ -44,14 +44,14 @@ module AlgorithmLib3 =
         (j',List.average sumTime)
     
     let Packing c s =
-        let s' = List.sort s
+        let s' = List.rev (List.sort s)
         let mutable boxs = Array.create 0 1.0
         List.iter (fun item -> 
-            let index = Array.tryFindIndex (fun box -> (box - item) > -0.0000001) boxs
+            let index = Array.tryFindIndex (fun box -> (box - item) >= -0.000001 ) boxs
             if index.IsSome then
                 boxs.[index.Value] <- boxs.[index.Value] - item
             else
-                boxs <- Array.append boxs [|1.0|]
-                boxs.[boxs.Length - 1] <- boxs.[boxs.Length - 1] - item
+                boxs <- Array.append boxs [|1.0 - item|]
+            boxs <- Array.rev (Array.sort boxs)
             ) s'
         boxs.Length
