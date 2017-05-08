@@ -80,9 +80,9 @@ module AlgorithmLib2 =
     
     [<Struct>]
     type Node = 
-            val ID:int
-            val Weight:float
-            new (id:int,weight:float) = {ID = id; Weight = weight}
+        val ID:int
+        val Weight:float
+        new (id:int,weight:float) = {ID = id; Weight = weight}
 
     let AdjListToAdjMatrix (adjList : Set<Node>[]) =
         let adjMatrix = Array2D.create adjList.Length adjList.Length infinity
