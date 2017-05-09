@@ -115,3 +115,23 @@ module AlgorithmLib4 =
                         k <- k + 1
                 else
                     s.[k] <- s.[k] + 1
+
+    let knapsack01 v (w:float []) s =
+        let result = Array.create (Array.length v) 0
+        let mutable maxSum = 0.0
+        let mutable k = 0
+        while result.[0] < 2 do
+            if result.[k] >= 2 then
+                result.[k] <- 0
+                k <- k - 1
+                result.[k] <- result.[k] + 1
+            else
+                if k >= result.Length - 1 then
+                    if s >= Array.sum (Array.map2 (fun item1 item2 -> (float item1) * item2 ) result w) then
+                        let sum = Array.sum (Array.map2 (fun item1 item2 -> (float item1) * item2 ) result v)
+                        if maxSum < sum then
+                            maxSum <- sum
+                    result.[k] <- result.[k] + 1
+                else
+                    k <- k + 1
+        maxSum

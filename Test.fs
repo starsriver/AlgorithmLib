@@ -159,6 +159,23 @@ module Test
         adjList.[15] <- set [Node(13,4.0);Node(14,3.0)]
         let arr4 = AdjListToAdjMatrix adjList
         let m,s = Floyd arr4
+        printfn "起点：0   终点：15"
         PrintFloyd s 0 15
+        printfn "起点：0    终点：8"
+        PrintFloyd s 0 8
+        printfn "起点：6    终点：10"
+        PrintFloyd s 6 10
+        printfn "起点：3    终点：15"
+        PrintFloyd s 3 15
 
+
+        printfn "\n\n3:"
+        printfn "4皇后:"
         nQuene 4
+        printfn "8皇后:"
+        nQuene 8
+
+        printfn "\n\n4:"
+        let w = [|50.0;30.0;45.0;25.0;5.0|]
+        let v = [|200.0;180.0;225.0;200.0;50.0|]
+        printfn "%A" (knapsack01 v w 100.0)
