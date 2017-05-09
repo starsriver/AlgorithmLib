@@ -1,6 +1,6 @@
 namespace SRAlgorithmLib
 /// <summary>
-/// 算法导论第二次上机使用的算法模块
+/// 算法导论第四次上机使用的算法模块
 /// Auther：乔新文
 /// StudentID：14130140393
 /// </summary>
@@ -37,16 +37,81 @@ module AlgorithmLib4 =
     let InitializeSingleSource (G:Graphics) (s:int) =
         G.V.[s].d <- 0.0
 
-    let Relax (u : Vertex ref) (v : Vertex ref) (E : Edge list)= 
-        let index = List.tryFindIndex (fun (item : Edge) -> item.u = u && item.v = v) E
-        if index.IsNone then
-            ()
-        else 
-            if (!v).d > (!u).d + E.[index.Value].weight then
-                (!v).d <- (!u).d + E.[index.Value].weight
-                (!v).π <- Some(u)
-    let BellmanFord (G:float [,]) = 
+    let Relax (e:Edge)= 
+        if (!e.v).d > (!e.u).d + e.weight then
+            (!e.v).d <- (!e.u).d + e.weight
+            (!e.v).π <- Some(e.v)
+    let BellmanFord (G:float [,]) (s:int)= 
         let g = Graphics(G)
+        InitializeSingleSource g s
         for i = 0 to g.V.Length - 2 do
-            List.iter (fun (item : Edge) -> Relax item.u item.v g.E) g.E
-        ()
+            List.iter Relax g.E
+        not (
+                List.exists (fun (item : Edge) -> 
+                    (!item.v).d > (!item.u).d + item.weight
+                ) g.E
+            )
+
+    [<Struct>]
+    type Node = 
+        val ID:int
+        val Weight:float
+        new (id:int,weight:float) = {ID = id; Weight = weight}
+
+    let AdjListToAdjMatrix (adjList : Set<Node>[]) =
+        let adjMatrix = Array2D.create adjList.Length adjList.Length infinity
+        for i = 0 to adjList.Length - 1 do
+            adjMatrix.[i,i] <- 0.0
+            for j in adjList.[i] do
+                adjMatrix.[i,j.ID] <- j.Weight
+        
+        adjMatrix
+
+    let Floyd (G:float [,]) = 
+        let n = Array2D.length1 G
+        let m = Array2D.copy G
+        let s = Array2D.create n n -1
+        for i = 0 to n - 1 do
+            for j = 0 to n - 1 do
+                for k = 1 to n - 1 do
+                    let q = m.[i,k] + m.[k,j]
+                    if q < m.[i,j] then
+                         m.[i,j] <- q
+                         s.[i,j] <- k
+        (m,s)
+
+    let rec PrintFloyd (s:int [,]) (i:int) (j:int) = 
+        if i = j then
+            printf "%A " i
+        elif s.[i,j] = -1 then
+            printf "%A %A " i j
+        else
+            PrintFloyd s i s.[i,j]
+            PrintFloyd s s.[i,j] j
+
+    let canPlace (s: int []) (n:int) =
+        let mutable i = 0
+        let mutable result = true
+        while result && i < n do
+            if s.[i] = s.[n] || abs (n - i) = abs(s.[n] - s.[i]) then
+                result <- false
+            else
+                i <- i + 1
+        result
+    let nQuene n =
+        let s = Array.create n 0
+        let mutable k = 0
+        while s.[0] < n do
+            if s.[k] >= n then
+                s.[k] <- 0
+                k <- k - 1
+                s.[k] <- s.[k] + 1
+            else
+                if canPlace s k then
+                    if k = n - 1 then
+                        printfn "%A" s
+                        s.[k] <- s.[k] + 1
+                    else 
+                        k <- k + 1
+                else
+                    s.[k] <- s.[k] + 1

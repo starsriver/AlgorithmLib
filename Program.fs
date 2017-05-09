@@ -8,5 +8,8 @@ open System
 open Test
 [<EntryPoint>]
 let main argv =
-    P3()
+    // P1()
+    // P2()
+    // P3()
+    P4()
     0 // return an integer exit code
